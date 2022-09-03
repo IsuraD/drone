@@ -1,0 +1,470 @@
+openapi: 3.0.3
+info:
+  title: Swagger Drone - OpenAPI 3.0
+  description: |-
+    This is a sample definition for loading drones with medicines. 
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: isuradilhara@gmail.com
+  version: 1.0.0
+servers:
+  - url: https://localhost:8080/api/v3
+tags:
+  - name: drone
+    description: Everything about drone
+paths:
+  /drones:
+    post:
+      tags:
+        - drone
+      summary: Add a new drone
+      description: Add a new drone
+      operationId: addDrone
+      requestBody:
+        description: Register a new drone
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Drone'
+        required: true
+      responses:
+        '201':
+          description: Successful Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Drone'          
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      tags:
+        - drone
+      summary: get all drones
+      description: Get all drones
+      operationId: getDrones
+      responses:
+        '200':
+          description: All Drones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DroneGet' 
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /drones/{serial-number}:
+    put:
+      tags:
+        - drone
+      summary: Update a new drone
+      description: Update a  drone
+      parameters:
+        - name: serial-number
+          in: path
+          description: drone serieal number
+          required: true
+          schema:
+            type: string
+      operationId: updateDrone
+      requestBody:
+        description: Register a new drone
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Drone'
+        required: true
+      responses:
+        '200':
+          description: Successful updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Drone'          
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - drone
+      summary: Delate a drone
+      description: Delate a drone
+      parameters:
+        - name: serial-number
+          in: path
+          description: drone serieal number
+          required: true
+          schema:
+            type: string
+      operationId: deleteDrone
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      
+    get:
+      tags:
+        - drone
+      summary: get a  drone
+      description: Get a  drone
+      parameters:
+        - name: serial-number
+          in: path
+          description: drone serieal number
+          required: true
+          schema:
+            type: string
+      operationId: getDrone
+      responses:
+        '200':
+          description: Successful updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DroneGet'          
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /drones/{serial-number}/load:
+    put:
+      tags:
+        - drone
+      summary: Load medicine to drone
+      description: Load medicine to drone
+      parameters:
+        - name: serial-number
+          in: path
+          description: drone serieal number
+          required: true
+          schema:
+            type: string
+      operationId: loadDrone
+      requestBody:
+        description: Load medicine to drone
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoadDrone'
+        required: true
+      responses:
+        '200':
+          description: Successful updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoadDrone'          
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /drones/search:
+    get:
+      tags:
+        - drone
+      summary: get available drones for loading
+      description: Get all available drones for loading
+      operationId: getAavailbleDronesToLoad
+      responses:
+        '200':
+          description: All available drones for loading
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DroneSearch' 
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  
+components:
+  schemas:
+    Drone:
+      required:
+        - serieal-number
+        - model
+        - weight-limit
+        - state
+      type: object
+      properties:
+        serieal-number:
+          type: string
+          maxLength: 100
+          example: 101313-ad2233s-adadsf3s-adafdfasdfda
+        model:
+          type: string
+          description: the model of the drone
+          example: Lightweight
+          enum:
+            - Lightweight
+            - Middleweight
+            - Cruiserweight
+            - Heavyweight
+        weight-limit:
+          type: integer
+          format: int32
+          example: 10
+        battery-capacity:
+          type: integer
+          format: int32
+          example: 10
+        state:
+          type: string
+          description: pet state of the drone
+          enum:
+            - IDLE
+            - LOADING
+            - LOADED
+            - DELIVERING
+            - DELIVERED
+            - RETURNING
+    DroneGet:
+      required:
+        - serieal-number
+        - model
+        - weight-limit
+        - state
+      type: object
+      properties:
+        serieal-number:
+          type: string
+          example: 101313-ad2233s-adadsf3s-adafdfasdfda
+        model:
+          type: string
+          description: the model of the drone
+          example: Lightweight
+          enum:
+            - Lightweight
+            - Middleweight
+            - Cruiserweight
+            - Heavyweight
+        weight-limit:
+          type: integer
+          format: int32
+          example: 10
+        load:
+          $ref: '#/components/schemas/LoadDrone'
+        battery-capacity:
+          type: integer
+          format: int32
+          example: 10
+        state:
+          type: string
+          description: pet state of the drone
+          enum:
+            - IDLE
+            - LOADING
+            - LOADED
+            - DELIVERING
+            - DELIVERED
+            - RETURNING
+    DroneSearch:
+      required:
+        - serieal-number
+        - model
+        - weight-limit
+        - state
+      type: object
+      properties:
+        serieal-number:
+          type: string
+          example: 101313-ad2233s-adadsf3s-adafdfasdfda
+        weight-limit:
+          type: integer
+          format: int32
+          example: 100
+        weight-remaining:
+          type: integer
+          format: int32
+          example: 10          
+        current-load:
+          $ref: '#/components/schemas/LoadDrone'
+        battery-capacity:
+          type: integer
+          format: int32
+          example: 10
+        state:
+          type: string
+          description: pet state of the drone
+          enum:
+            - IDLE
+            - LOADING
+            - LOADED
+            - DELIVERING
+            - DELIVERED
+            - RETURNING
+    LoadDrone:
+      type: object
+      properties:
+        medicine:
+          type: array
+          items:
+            $ref: '#/components/schemas/Medicine'
+    Medicine:
+      required:
+        - serieal-number
+        - model
+        - weight-limit
+        - state
+      type: object
+      properties:
+        name:
+          type: string
+          description: the name of the medicine
+          pattern: ^[A-Za-z0-9-_]$
+        weight:
+          type: integer
+          format: int32
+          example: 10
+        code:
+          type: string
+          pattern: ^[A-Z0-9-]$
+          example: UUUQQQEW1223_10
+        imageURL:
+          type: string
+          description: image of the drone
+    ErrorResponse:
+      type: object
+      properties:
+        error-code:
+          type: string
+        message:
+          type: string
