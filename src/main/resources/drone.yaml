@@ -8,7 +8,7 @@ info:
     email: isuradilhara@gmail.com
   version: 1.0.0
 servers:
-  - url: https://localhost:8080/api/v3
+  - url: https://localhost:8080/drone
 tags:
   - name: drone
     description: Everything about drone
