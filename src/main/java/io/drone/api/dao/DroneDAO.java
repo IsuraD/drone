@@ -1,16 +1,16 @@
 package io.drone.api.dao;
 
 import io.drone.api.SQLConstants;
-import io.drone.model.Drone;
-import io.drone.model.DroneGet;
-import io.drone.model.LoadDrone;
-import io.drone.model.Medicine;
+import io.drone.model.*;
 
+import javax.ws.rs.BadRequestException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DroneDAO {
     private static final DroneDAO droneDAO = new DroneDAO();
@@ -42,6 +42,7 @@ public class DroneDAO {
 
     public void addMedicine(Medicine medicine) {
         try {
+            validateInput(medicine);
             Connection connection = getConnection();
             PreparedStatement prepStmt = connection.prepareStatement(SQLConstants.ADD_MEDICINE);
             prepStmt.setString(1, medicine.getName());
@@ -52,6 +53,22 @@ public class DroneDAO {
             connection.commit();
         } catch (SQLException e) {
             System.out.println("Error while adding medicine:" + medicine.getName() + ": " + e);
+        }
+    }
+
+    private void validateInput(Medicine medicine) {
+        String regexName = "^[A-Za-z0-9-_]\\w{0,100}$";
+        Pattern pN = Pattern.compile(regexName);
+        Matcher mMN = pN.matcher(medicine.getName());
+        if (!mMN.matches()) {
+            throw new BadRequestException("Invalid medicine name: " + medicine.getName());
+        }
+
+        String regexCode = "^[A-Z0-9_]\\w{0,100}$";
+        Pattern pC = Pattern.compile(regexCode);
+        Matcher mC = pC.matcher(medicine.getCode());
+        if (!mC.matches()) {
+            throw new BadRequestException("Invalid medicine code: " + medicine.getCode());
         }
     }
 
@@ -71,6 +88,7 @@ public class DroneDAO {
 
     private Connection getConnection() throws SQLException {
         String jdbcURL = "jdbc:h2:mem:test";
+        DriverManager.registerDriver(new org.h2.Driver());
         return DriverManager.getConnection(jdbcURL);
     }
 
@@ -155,6 +173,7 @@ public class DroneDAO {
     }
 
     public LoadDrone loadDrone(LoadDrone body, String serialNumber) {
+        validateLoad(body, serialNumber);
         Map<String, Integer> medicines = getMedicineMap(body.getMedicine());
         Map<String, Medicine> nameToMedicineMap = getNameToMedicineMap(body.getMedicine());
         try {
@@ -170,12 +189,54 @@ public class DroneDAO {
                 prepStmt.setString(2, medicineName);
                 prepStmt.setInt(3, count);
                 prepStmt.execute();
+
+                PreparedStatement prepStmt2 = connection.prepareStatement(SQLConstants.UPDATE_DRONE_STATE);
+                prepStmt2.setString(1, Drone.StateEnum.LOADED.toString());
+                prepStmt2.setString(2, serialNumber);
+                prepStmt2.execute();
             }
             connection.commit();
         } catch (SQLException e) {
             System.out.println("Error while loading medicine to drone:" + serialNumber + ": " + e);
         }
         return body;
+    }
+
+    public List<DroneSearch> getAvailableDronesToLoad() {
+        try {
+            Connection connection = getConnection();
+            PreparedStatement prepStmt = connection.prepareStatement(SQLConstants.LOAD_AVAILABLE_DRONES);
+            prepStmt.setString(1, Drone.StateEnum.IDLE.toString());
+            List<DroneSearch> drones = new ArrayList<>();
+            try (ResultSet rs = prepStmt.executeQuery()) {
+                while (rs.next()) {
+                    DroneSearch droneSearch = new DroneSearch();
+                    DroneGet drone = getDrone(rs.getString("SERIAL_NUMBER"));
+                    droneSearch.setCurrentLoad(drone.getLoad());
+                    droneSearch.setBatteryCapacity(drone.getBatteryCapacity());
+                    droneSearch.setState(DroneSearch.StateEnum.IDLE);
+                    droneSearch.setSeriealNumber(drone.getSeriealNumber());
+                    droneSearch.setWeightLimit(drone.getWeightLimit());
+                    droneSearch.setWeightRemaining(drone.getWeightLimit());
+                    drones.add(droneSearch);
+                }
+            }
+            return drones;
+        } catch (SQLException e) {
+            System.out.println("Error while lading the available drones" + e);
+        }
+        return null;
+    }
+
+    private void validateLoad(LoadDrone body, String serialNumber) {
+        int maxWeight = getDrone(serialNumber).getWeightLimit();
+        int totalWeight = 0;
+        for (Medicine medicine : body.getMedicine()) {
+            totalWeight = totalWeight + medicine.getWeight();
+        }
+        if (totalWeight > maxWeight) {
+            throw new BadRequestException("Max Allowed weight exceeded.");
+        }
     }
 
     private Map<String, Integer> getMedicineMap(List<Medicine> medicines) {

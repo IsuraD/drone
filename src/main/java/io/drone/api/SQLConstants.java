@@ -28,6 +28,8 @@ public class SQLConstants {
             + "(SERIAL_NUMBER, MODEL, WEIGHT_LIMIT, BATTERY_CAPACITY, STATE)"
             + "VALUES (?,?,?,?,?)";
 
+    public static final String UPDATE_DRONE_STATE = "UPDATE DRONE SET STATE=? WHERE SERIAL_NUMBER=?";
+
     public static final String ADD_DRONE_MEDICINE = "INSERT INTO DRONE_MEDICINE_ASSOCIATION "
             + "(DRONE_SERIAL_NUMBER, MEDICINE_NAME, MEDICINE_COUNT)"
             + "VALUES (?,?,?)";
@@ -42,7 +44,7 @@ public class SQLConstants {
             + "(NAME, WEIGHT, CODE, IMAGE_URL)"
             + "VALUES (?,?,?,?)";
 
-    public static final String LOAD_DRONES = "SELECT * FROM DRONE";
+    public static final String LOAD_AVAILABLE_DRONES = "SELECT SERIAL_NUMBER FROM DRONE WHERE STATE=?";
 
     public static final String LOAD_DRONE = "SELECT * FROM DRONE WHERE SERIAL_NUMBER = ?";
 
