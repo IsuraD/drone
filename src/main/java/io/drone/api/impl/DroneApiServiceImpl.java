@@ -3,10 +3,8 @@ package io.drone.api.impl;
 import io.drone.api.DroneApi;
 import io.drone.api.*;
 import io.drone.api.dao.DroneDAO;
-import io.drone.model.Drone;
-import io.drone.model.DroneGet;
-import io.drone.model.DroneSearch;
-import io.drone.model.LoadDrone;
+import io.drone.model.*;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -31,34 +29,7 @@ public class DroneApiServiceImpl implements DroneApi {
      */
     public Drone addDrone(Drone body) {
         DroneDAO.getInstance().addDrone(body);
-        try {
-            String jdbcURL = "jdbc:h2:mem:test";
-
-            Connection connection = DriverManager.getConnection(jdbcURL);
-
-            System.out.println("Connected to H2 in-memory database.");
-
-            String sql = "Create table students (ID int primary key, name varchar(50))";
-
-            Statement statement = connection.createStatement();
-
-            statement.execute(sql);
-
-            System.out.println("Created table students.");
-
-            sql = "Insert into students (ID, name) values (1, 'Nam Ha Minh')";
-
-            int rows = statement.executeUpdate(sql);
-
-            if (rows > 0) {
-                System.out.println("Inserted a new row.");
-            }
-
-            connection.close();
-        } catch (Exception e) {
-            System.out.println("error"+ e);
-        }
-        return null;
+        return body;
     }
     
     /**
@@ -92,9 +63,7 @@ public class DroneApiServiceImpl implements DroneApi {
      *
      */
     public DroneGet getDrone(String serialNumber) {
-        // TODO: Implement...
-        
-        return null;
+        return DroneDAO.getInstance().getDrone(serialNumber);
     }
     
     /**
@@ -124,9 +93,7 @@ public class DroneApiServiceImpl implements DroneApi {
      *
      */
     public LoadDrone loadDrone(LoadDrone body, String serialNumber) {
-        // TODO: Implement...
-        
-        return null;
+        return DroneDAO.getInstance().loadDrone(body, serialNumber);
     }
     
     /**
