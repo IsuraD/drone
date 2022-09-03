@@ -2,11 +2,17 @@ package io.drone.api.impl;
 
 import io.drone.api.DroneApi;
 import io.drone.api.*;
+import io.drone.api.dao.DroneDAO;
 import io.drone.model.Drone;
 import io.drone.model.DroneGet;
 import io.drone.model.DroneSearch;
 import io.drone.model.LoadDrone;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -24,8 +30,34 @@ public class DroneApiServiceImpl implements DroneApi {
      *
      */
     public Drone addDrone(Drone body) {
-        // TODO: Implement...
-        
+        DroneDAO.getInstance().addDrone(body);
+        try {
+            String jdbcURL = "jdbc:h2:mem:test";
+
+            Connection connection = DriverManager.getConnection(jdbcURL);
+
+            System.out.println("Connected to H2 in-memory database.");
+
+            String sql = "Create table students (ID int primary key, name varchar(50))";
+
+            Statement statement = connection.createStatement();
+
+            statement.execute(sql);
+
+            System.out.println("Created table students.");
+
+            sql = "Insert into students (ID, name) values (1, 'Nam Ha Minh')";
+
+            int rows = statement.executeUpdate(sql);
+
+            if (rows > 0) {
+                System.out.println("Inserted a new row.");
+            }
+
+            connection.close();
+        } catch (Exception e) {
+            System.out.println("error"+ e);
+        }
         return null;
     }
     
@@ -73,8 +105,16 @@ public class DroneApiServiceImpl implements DroneApi {
      */
     public List<DroneGet> getDrones() {
         // TODO: Implement...
-        
-        return null;
+        DroneGet droneGet = new DroneGet();
+        droneGet.setBatteryCapacity(50);
+        droneGet.setModel(DroneGet.ModelEnum.HEAVYWEIGHT);
+        droneGet.setState(DroneGet.StateEnum.DELIVERING);
+        droneGet.setSeriealNumber("asdfadfadsfads");
+        droneGet.setWeightLimit(50);
+        List<DroneGet> list = new ArrayList<>();
+        list.add(droneGet);
+
+        return list;
     }
     
     /**
